@@ -38,7 +38,7 @@
       return;
     }
 
-    const path = window.location.pathname.replace(/\\/$/, "") || "/";
+    const path = window.location.pathname.replace(/\/$/, "") || "/";
 
     if (config.excludedPaths.includes(path)) return;
 
