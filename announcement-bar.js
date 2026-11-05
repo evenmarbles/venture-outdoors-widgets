@@ -104,7 +104,7 @@
     }
 
     #vo-announcement-bar .vo-bar-button:hover {
-      background: #e7f1ed;
+      background: #E6F2F8;
     }
 
     #vo-announcement-bar .vo-bar-close {
