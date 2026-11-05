@@ -2,6 +2,12 @@
 (function () {
   "use strict";
 
+  const VERSION = "1.0.0";
+
+  console.info(
+    `[Venture Outdoors] Announcement Bar v${VERSION}`
+  );
+
   const config = {
     message: "🦃 Win a Manatee Kayak Adventure for Two!",
     buttonText: "Enter Free",
