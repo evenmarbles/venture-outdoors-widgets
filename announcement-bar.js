@@ -10,7 +10,7 @@
     start: "2026-11-10T10:00:00-05:00",
     end: "2026-11-28T00:00:00-05:00",
 
-    backgroundColor: "#174d43",
+    backgroundColor: "#B65A27",
     textColor: "#ffffff",
 
     excludedPaths: [
