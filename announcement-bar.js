@@ -253,7 +253,7 @@
   // Wait until Gondola has finished loading the page
   // before inserting our announcement bar.
   function startAnnouncementBar() {
-    window.setTimeout(init, 1000);
+    init();
   }
 
   if (document.readyState === "complete") {
