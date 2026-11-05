@@ -191,8 +191,63 @@
     content.append(message, button);
     bar.append(content, close);
 
-    // Insert above the website content.
+    
+    // Insert the announcement bar at the top of the page.
     document.body.prepend(bar);
+
+    // Gondola uses a fixed navigation header.
+    // Offset it only while the announcement bar is visible.
+    const header = document.querySelector("header.fixed");
+
+    function updateHeaderPosition() {
+      if (!header || !header.isConnected) return;
+
+      const rect = bar.getBoundingClientRect();
+
+      // As the bar scrolls away, gradually reduce the offset.
+      const remainingHeight = bar.isConnected
+        ? Math.max(0, rect.bottom)
+        : 0;
+
+      header.style.top = remainingHeight + "px";
+    }
+
+    // Keep the announcement bar above Gondola's header.
+    bar.style.zIndex = "50";
+
+    // Update the fixed header as the visitor scrolls.
+    let scrollScheduled = false;
+
+    function onScroll() {
+      if (scrollScheduled) return;
+
+      scrollScheduled = true;
+
+      requestAnimationFrame(function () {
+        updateHeaderPosition();
+        scrollScheduled = false;
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, {
+      passive: true
+    });
+
+    // Handle responsive layout changes.
+    window.addEventListener("resize", updateHeaderPosition);
+
+    // Restore the header when the announcement is dismissed.
+    close.addEventListener("click", function () {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", updateHeaderPosition);
+
+      if (header) {
+        header.style.top = "0px";
+      }
+    });
+
+    // Set the correct initial position.
+    updateHeaderPosition();
   }
 
   // Initialize once the document is ready.
