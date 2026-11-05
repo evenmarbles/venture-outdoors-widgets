@@ -250,10 +250,18 @@
     updateHeaderPosition();
   }
 
-  // Initialize once the document is ready.
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once: true });
+  // Wait until Gondola has finished loading the page
+  // before inserting our announcement bar.
+  function startAnnouncementBar() {
+    window.setTimeout(init, 1000);
+  }
+
+  if (document.readyState === "complete") {
+    startAnnouncementBar();
   } else {
-    init();
+    window.addEventListener("load", startAnnouncementBar, {
+      once: true
+    });
   }
 })();
+
