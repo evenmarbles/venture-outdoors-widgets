@@ -1,8 +1,7 @@
-
 /**
  * Venture Outdoors | Turkey Day Giveaway
  * Landing Page Controller
- * Version 1.0.0
+ * Version 1.0.1
  */
 
 (function () {
@@ -144,29 +143,29 @@
       }
     }
 
-    // Preview mode affects appearance only.
-    // It never changes the official entry window.
+    // Brevo manages its own validation and submit button
+    // throughout the actual entry period.
+    // Disable only in a forced Open preview outside that period.
+
     const submit = ID("sib-form")?.querySelector(
       'button[type="submit"]'
     );
 
-    if (submit) {
-      const permitted =
-        Date.now() >= START &&
-        Date.now() < END;
+    const now = Date.now();
 
-      if (submit.disabled !== !permitted) {
-        submit.disabled = !permitted;
-      }
+    const actualEntriesOpen =
+      now >= START && now < END;
 
-      if (!permitted) {
-        submit.title = "Entries are not currently open";
-      } else {
-        submit.removeAttribute("title");
-      }
+    if (
+      submit &&
+      preview === "open" &&
+      !actualEntriesOpen
+    ) {
+      submit.disabled = true;
+      submit.title = "Entries are not currently open";
     }
 
-    // Keep the hero CTA pointing to Section 3.
+    // Hero CTA scroll target
     document.querySelectorAll(
       'a[href="#sib-form-container"]'
     ).forEach((a) => {
@@ -180,11 +179,10 @@
   function initialize() {
     render();
 
-    // Automatically update as campaign dates change.
     setInterval(render, 15000);
 
     console.info(
-      "[Venture Outdoors] Giveaway Landing v1.0.0 initialized."
+      "[Venture Outdoors] Giveaway Landing v1.0.1 initialized."
     );
   }
 
