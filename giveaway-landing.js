@@ -1,7 +1,7 @@
 /**
  * Venture Outdoors | Turkey Day Giveaway
  * Landing Page Controller
- * Version 1.0.1
+ * Version 1.0.2
  */
 
 (function () {
@@ -177,12 +177,19 @@
   }
 
   function initialize() {
+    // Status cards are wrapped in <template> tags in the page HTML so that
+    // non-JS readers (Gondola's AI start page) skip them. Unwrap them first.
+    ["vo-giveaway-coming-soon", "vo-giveaway-closed", "vo-giveaway-winner"].forEach((id) => {
+      const tpl = ID(id + "-tpl");
+      if (tpl && !ID(id)) tpl.replaceWith(tpl.content.cloneNode(true));
+    });
+
     render();
 
     setInterval(render, 15000);
 
     console.info(
-      "[Venture Outdoors] Giveaway Landing v1.0.1 initialized."
+      "[Venture Outdoors] Giveaway Landing v1.0.2 initialized."
     );
   }
 
