@@ -1,13 +1,15 @@
-
 (function () {
   "use strict";
 
   // ============================================================
   // VENTURE OUTDOORS — ANNOUNCEMENT BAR
-  // Version: 1.0.1
+  // Version: 1.0.2
+  // 1.0.2 (2026-11-23): mobile menu fix. Moving the header made
+  // Gondola's fixed menu panel 1px high (scroll-timeline browsers)
+  // or cover the header (fallback browsers).
   // ============================================================
 
-  const VERSION = "1.0.1";
+  const VERSION = "1.0.2";
 
   const config = {
     message: "🦃 Win a Manatee Kayak Adventure for Two!",
@@ -224,6 +226,25 @@
 
     }
 
+    /* ========================================================
+       MOBILE MENU FIX (1.0.2)
+
+       Gondola's mobile menu panel is position: fixed inside the
+       header. The transform above turns the header into the
+       panel's frame, so bottom: 0 squeezed it to 1px. Give it an
+       explicit height instead. In the fallback (older browsers),
+       push the panel down by the header's current offset.
+       ======================================================== */
+
+    header.fixed.vo-announcement-header .fixed.inset-x-0.bottom-0 {
+      bottom: auto;
+      height: calc(100dvh - var(--navbar-height) - var(--vo-bar-height, 0px));
+    }
+
+    header.fixed.vo-announcement-fallback .fixed.inset-x-0.bottom-0 {
+      top: calc(var(--navbar-height) + var(--vo-header-top, 0px));
+    }
+
     /* Mobile */
 
     @media (max-width: 600px) {
@@ -328,6 +349,11 @@
     );
 
     header.style.top = remaining + "px";
+
+    document.documentElement.style.setProperty(
+      "--vo-header-top",
+      remaining + "px"
+    );
   }
 
   function onScroll() {
@@ -346,6 +372,8 @@
     header.classList.add("vo-announcement-header");
 
   } else {
+
+    header.classList.add("vo-announcement-fallback");
 
     updateFallbackHeader();
 
@@ -374,6 +402,7 @@
     }
 
     header.classList.remove("vo-announcement-header");
+    header.classList.remove("vo-announcement-fallback");
 
     if (!supportsScrollTimeline) {
       window.removeEventListener("scroll", onScroll);
@@ -396,6 +425,10 @@
 
     document.documentElement.style.removeProperty(
       "--vo-bar-height"
+    );
+
+    document.documentElement.style.removeProperty(
+      "--vo-header-top"
     );
 
     style.remove();
