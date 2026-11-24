@@ -3,48 +3,88 @@
 
   // ============================================================
   // VENTURE OUTDOORS — ANNOUNCEMENT BAR
-  // Version: 1.0.2
+  // Version: 1.1.0
+  // 1.1.0 (2026-11-24): campaign list. The bar shows whichever
+  // campaign is running now, so the Turkey Day Giveaway hands over
+  // to the holiday gift card message at midnight on Nov 28 (ET)
+  // without another commit. Preview any campaign with
+  // ?vo_bar_preview=<id> (or =1 for the current/next one).
   // 1.0.2 (2026-11-23): mobile menu fix. Moving the header made
   // Gondola's fixed menu panel 1px high (scroll-timeline browsers)
   // or cover the header (fallback browsers).
   // ============================================================
 
-  const VERSION = "1.0.2";
+  const VERSION = "1.1.0";
 
-  const config = {
-    message: "🦃 Win a Manatee Kayak Adventure for Two!",
-    buttonText: "Enter Free",
-    url: "https://ventureoutdoorsflorida.com/turkey-day-giveaway",
+  // Campaigns, in date order. Times are Eastern (-05:00).
+  // Shown from start (inclusive) until end (exclusive).
 
-    start: "2026-11-10T10:00:00-05:00",
-    end: "2026-11-28T00:00:00-05:00",
+  const campaigns = [
+    {
+      id: "turkey-day-2026",
+      message: "🦃 Win a Manatee Kayak Adventure for Two!",
+      buttonText: "Enter Free",
+      url: "https://ventureoutdoorsflorida.com/turkey-day-giveaway",
 
-    backgroundColor: "#17658A",
-    textColor: "#ffffff",
+      start: "2026-11-10T10:00:00-05:00",
+      end: "2026-11-28T00:00:00-05:00",
 
-    excludedPaths: [
-      "/turkey-day-giveaway",
-      "/turkey-day-giveaway-rules",
-      "/turkey-day-giveaway-thank-you"
-    ],
+      backgroundColor: "#17658A",
+      textColor: "#ffffff",
+      ariaLabel: "Giveaway announcement",
 
-    storageKey: "vo-turkey-day-2026-dismissed"
-  };
+      excludedPaths: [
+        "/turkey-day-giveaway",
+        "/turkey-day-giveaway-rules",
+        "/turkey-day-giveaway-thank-you"
+      ],
+
+      storageKey: "vo-turkey-day-2026-dismissed"
+    },
+    {
+      id: "gift-card-holiday-2026",
+      message: "🎁 Give the gift of paddling this holiday season",
+      buttonText: "Shop Gift Cards",
+      // FareHarbor gift card item; opens in FareHarbor's pop-up.
+      url: "https://fareharbor.com/embeds/book/ventureoutdoorsllc/items/341584/?full-items=yes&flow=648312",
+
+      start: "2026-11-28T00:00:00-05:00",
+      end: "2026-12-25T00:00:00-05:00",
+
+      backgroundColor: "#17658A",
+      textColor: "#ffffff",
+      ariaLabel: "Gift card announcement",
+
+      excludedPaths: [],
+
+      storageKey: "vo-gift-card-holiday-2026-dismissed"
+    }
+  ];
 
   // ============================================================
   // 1. ELIGIBILITY CHECKS
   // ============================================================
 
   const params = new URLSearchParams(window.location.search);
-  const preview = params.get("vo_bar_preview") === "1";
+  const previewValue = params.get("vo_bar_preview");
+  const preview = previewValue !== null;
 
   const now = Date.now();
 
-  if (
-    !preview &&
-    (now < Date.parse(config.start) ||
-     now >= Date.parse(config.end))
-  ) {
+  function isRunning(c) {
+    return now >= Date.parse(c.start) && now < Date.parse(c.end);
+  }
+
+  let config = campaigns.find(isRunning);
+
+  if (preview) {
+    config =
+      campaigns.find(function (c) { return c.id === previewValue; }) ||
+      config ||
+      campaigns.find(function (c) { return now < Date.parse(c.end); });
+  }
+
+  if (!config) {
     return;
   }
 
@@ -277,7 +317,7 @@
 
   bar.id = "vo-announcement-bar";
   bar.setAttribute("role", "region");
-  bar.setAttribute("aria-label", "Giveaway announcement");
+  bar.setAttribute("aria-label", config.ariaLabel);
 
   const content = document.createElement("div");
   content.className = "vo-bar-content";
